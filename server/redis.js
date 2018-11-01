@@ -21,8 +21,8 @@ module.exports = {
 
   clearCache(rid) {
     let keys = [
-      configs.redis.getChatCountKey(rid),
-      configs.redis.getOnlineCountKey(rid),
+      configs.redis.keys.getChatCountKey(rid),
+      configs.redis.keys.getOnlineCountKey(rid),
     ];
     return client.del.apply(client, keys);
     //yield resources.redis.live.del.apply(resources.redis.live, keys);
