@@ -13,6 +13,7 @@ module .exports = class Base extends EventEmitter {
     this.nRequests = 0;
     this.nConnected = 0;
     this.nRecvPong = 0;
+    this.nDisconnected = 0;
   }
 
   run(data) {
@@ -44,14 +45,14 @@ module .exports = class Base extends EventEmitter {
   createClient(uri) {
     //console.log('create client, connect to ', uri);
     const { origin, pathname } = new URL(uri);
-    var manager = ioc.Manager(origin, { transports: [ 'websocket' ], multiplex: false, reconnection: false});
+    var manager = ioc.Manager(origin, { transports: [ 'websocket' ], multiplex: false});
     var client = manager.socket(pathname);
     //let client = ioc(uri);
 
     // init socket listeners
     client.on('connect', this.handleConnect.bind(this, client));
-    client.on('disconnect', this.handleDisconnect);
-    client.on('error', this.handleError);
+    client.on('disconnect', this.handleDisconnect.bind(this));
+    client.on('error', this.handleError.bind(this));
     return client;
   }
 
@@ -79,10 +80,8 @@ module .exports = class Base extends EventEmitter {
   }
 
   handleConnect(client){
+    this.emit('connect');
     this.nConnected++;
-    if(this.nConnected == 1) {
-      client.emit('/clear', _ => console.log('clear cache success'));
-    }
 
     //this.send('hello');
 
@@ -97,14 +96,14 @@ module .exports = class Base extends EventEmitter {
     //});
 
     client.emit('/room/enter', { rid: 'room1' }, data => {
-      this.emit('connect', data);
     });
 
   };
 
   handleDisconnect(reason){
-    console.log('handle disconnected...', reason);
-    this.nConnected--;
+    //this.nConnected --;
+    //console.log('handle disconnected...', this.nDisconnected, reason);
+
 
     this.emit('disconnect');
   };

@@ -108,7 +108,7 @@ module.exports = class Client extends EventEmitter{
   }
 
   onconnect(worker, data) {
-    console.log('-------------=========== onconnect', data, this.nConnected, this.nClientsPerWorker, this.nConcurrency, this.nClientsPerWorker * this.nConcurrency);
+    console.log('-------------=========== onconnect', this.nConnected, this.nClientsPerWorker, this.nConcurrency, this.nClientsPerWorker * this.nConcurrency);
     this.nConnected++;
     if(this.nConnected == this.nClientsPerWorker * this.nConcurrency) {
       console.log('-------------- all connected', this.getData());

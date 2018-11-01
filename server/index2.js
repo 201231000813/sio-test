@@ -29,9 +29,9 @@ live.on('connection', socket => {
   socket.on('/room/enter', (data, cb) => {
     (async () => {
       let { rid } = data;
-      if(!rooms[rid]) rooms[rid] = { onlineCount: 0, chatCount: 0 };
-      let onlineCount = ++rooms[rid].onlineCount;
 
+      let key = redisKeys.getOnlineCountKey(rid);
+      let onlineCount = await redis.incr(key);
       cb({rid, onlineCount});
     })();
   });
@@ -39,8 +39,9 @@ live.on('connection', socket => {
   socket.on('/chat', (data, cb) => {
     (async () => {
       let { rid } = data;
-      let chatCount = ++rooms[rid].chatCount;
 
+      let key = redisKeys.getChatCountKey(rid);
+      let chatCount = await redis.incr(key);
       cb({rid, chatCount});
     })();
   });

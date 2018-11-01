@@ -19,12 +19,14 @@ module.exports = {
     return client.incrAsync(key);
   },
 
-  clearCache(rid) {
+  async clearCache(rid) {
     let keys = [
       configs.redis.keys.getChatCountKey(rid),
       configs.redis.keys.getOnlineCountKey(rid),
     ];
-    return client.del.apply(client, keys);
+    console.log({keys});
+    await Promise.all(keys.map(async k => await client.delAsync(k)));
+    //return client.del.apply(client, keys);
     //yield resources.redis.live.del.apply(resources.redis.live, keys);
   },
 };
